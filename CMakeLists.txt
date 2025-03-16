@@ -5,10 +5,13 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Find SDL2 package
-find_package(SDL2 REQUIRED)
+if(WIN32)
+    set(SDL2_DIR "C:/msys64/mingw64")
+    include_directories(${SDL2_DIR}/include/SDL2)
+    link_directories(${SDL2_DIR}/lib)
+endif()
 
 # Include directories
-include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Add source files
@@ -25,4 +28,9 @@ file(GLOB_RECURSE SOURCES
 add_executable(gbemu ${SOURCES})
 
 # Link SDL2
-target_link_libraries(gbemu ${SDL2_LIBRARIES}) 
+if(WIN32)
+    target_link_libraries(gbemu SDL2main SDL2)
+else()
+    find_package(SDL2 REQUIRED)
+    target_link_libraries(gbemu ${SDL2_LIBRARIES})
+endif() 
